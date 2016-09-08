@@ -57,7 +57,7 @@ def rot_mosaic(filepath, file_pattern='IID201609*.jpg', k=1, replace=True):
     k: int
         Number of times the array is rotated counter-clockwise 90 degrees
     replace: bool
-        replace existing mosaic or not. if not, append "rot" ot filename
+        replace existing mosaic or not. if not, append "_rot" ot filename
     """ 
         
     mosaics = []
