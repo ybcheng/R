@@ -1,2 +1,2 @@
 # SaltonSea
-R scripts for processing Salton Sea data
+scripts for processing Salton Sea data
