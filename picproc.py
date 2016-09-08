@@ -76,3 +76,4 @@ def rot_mosaic(filepath, file_pattern='IID201609*.jpg', k=1, replace=True):
             r = m.replace('.jpg', '_rot.jpg')
             improc.imops.imio.imsave(r, img)
             print('generated: %s' % r)    
+
