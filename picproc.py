@@ -14,10 +14,35 @@ import improc
 import numpy as np
 
 
+def ren_mosaic(mosaic_dir, file_pattern='*stitch.jpg'):
+    """
+    may be a handy little tool that renames mosaic filename
+    so it matches folder name (core name)
+    
+    Parameters:
+    ----
+    mosaic_dir: str
+        the folder where stitched photos are
+    file_pattern: str
+        stitched photos, if out of MS ICE, it should have _stitch appended
+    """ 
+        
+    mosaics = []
+    for root, dirnames, filenames in os.walk(mosaic_dir):
+        for filename in fnmatch.filter(filenames, file_pattern):
+            mosaics.append(os.path.join(root, filename))
+
+    for m in mosaics:
+        dir_name = os.path.dirname(m).split('/')[-1]
+        new_name = os.path.dirname(m) + '/' + dir_name + '.jpg'
+        os.rename(m, new_name)
+        print('processed: %s' % new_name)
+
+
 def copy_mosaic(mosaic_dir, final_dir, file_pattern='IID201609*.jpg'):
     """
     may be a handy little tool that copies soil core mosaic to "final" folder
-    the program searches all the stitched photos in a dir (including sub-dir)
+    the program searches all the stitched photos in a dir and sub-dir
     and copies them to the "final" folder if they are not there already
     
     Parameters:
