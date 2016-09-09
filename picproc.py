@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Sep  8 11:42:08 2016
-Utilities for processing Salton soil core photos
+Utilities for processing Salton Sea soil core photos
 @author: ybcheng
 """
 
