@@ -13,11 +13,14 @@
 #
 # This section is designed to read in resDB_sub.csv
 # then do the average on spectral data for subsets that's sent for lab analysis
+# and generate resDB_pls.csv and derDB_pls.csv
+# 
+# resDB_sub.csv should have an extra column named "subset" than resDB.csv
 #
 # EDIT this: set up working directory and where the files are
 # also set up what filename pattern to search for
 # also set up expected number of spectra per core
-fd <- "C:/Users/ybcheng/Documents/data2016/20160907ASD/"
+fd <- "C:/Users/ybcheng/Documents/data2016/20160908ASD/"
 fpattern <- "*_sub.csv"
 specPerCore <- 28
 #
@@ -71,16 +74,25 @@ for (i in seq(length(fn))){
     tmpDer <- (plsDB[k+1]-plsDB[k-1])/(as.integer(colnames(plsDB[k+1]))-as.integer(colnames(plsDB[k-1])))
     tmpName <- colnames(plsDB[k])
     if (k==2){
-      derDB <- tmpDer
+      derDBpls <- tmpDer
       derNames <- tmpName
     } else{
-      derDB <- cbind(derDB, tmpDer)
+      derDBpls <- cbind(derDBpls, tmpDer)
       derNames <- append(derNames, tmpName)
     }
   }
-  colnames(derDB) <- derNames
-  derDB_name <- gsub("res", "der", plsDB_name)
-  write.csv(derDB,derDB_name)
+  colnames(derDBpls) <- derNames
+  derDBpls_name <- gsub("res", "der", plsDB_name)
+  write.csv(derDBpls,derDBpls_name)
+  
+  # also calculate continuum removal from plsDB
+  library(prospectr)
+  
+  crDBpls <- continuumRemoval(plsDB)
+  crDBpls <- as.data.frame(crDBpls)
+  colnames(crDBpls) <- colnames(plsDB)
+  crDBpls_fname <- gsub("res", "cr", plsDB_name)
+  write.csv(crDBpls, crDBpls_fname)
   
   print(paste0("processed: ", fn[i]))
 }

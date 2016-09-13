@@ -20,7 +20,7 @@ rm(list=ls()) # clean start
 library(asdreader)
 #
 # EDIT this: set up working directory and where the files are
-fd <- "C:/Users/ybcheng/Documents/data2016/20160907ASD/"
+fd <- "C:/Users/ybcheng/Documents/data2016/20160908ASD/"
 #
 print("reading in raw data....")
 
@@ -131,7 +131,7 @@ print("")
 # This section is to create labels for each of the spectral measurements
 #
 # EDIT the start and steps of the sequence
-absPerCore <- avgPerCore-2#means first and last measurements are white panels
+absPerCore <- avgPerCore-2  #means first and last measurements are white panels
 seqStart <- 5
 seqEnd <- seqStart * absPerCore
 seqStep <- 5
