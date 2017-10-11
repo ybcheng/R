@@ -9,12 +9,16 @@
 # email: ybcheng@formatinoenv.com 	           #
 # ******************************************** #
 
+
+# preparation work --------------------------------------------------------
+
 rm(list=ls())
 
 # EDIT the following parameters
-fd <- "C:/Users/ybcheng/Documents/data2016/20160906/"
-file_pattern <- "\\.jpg$"
-files_per_core <- 16
+#fd <- "f:/Photos/20161014/"
+fd <- "//CPDS/Form/Task3c/PhotoStation/20161015"
+file_pattern <- "\\.JPG$"
+files_per_core <- 28
 core_name_file <- "core_names.txt"
 #
 
@@ -24,12 +28,17 @@ if (dir.exists(fd) != TRUE){
 
 setwd(fd)
 
+
+
+
+# search and organize files -----------------------------------------------
+
 if (file.exists(core_name_file) != TRUE){
   stop("core name file does not exist")
 }
 
 # search files and sort by mtime
-fn <- list.files(fd, pattern = file_pattern)
+fn <- list.files(fd, pattern = file_pattern, recursive = TRUE)
 details <- file.info(fn)
 details <- details[with(details, order(as.POSIXct(mtime))), ]
 fn <- rownames(details)
@@ -50,19 +59,23 @@ if ((length(fn)/files_per_core) != length(core_names)){
         move_to <- paste0("./", core_names[i], "/", fn[j])
         file.rename(from=fn[j], to=move_to)
       }
-      k <- k + files_per_core
       print(paste0("processed: ", core_names[i]))
     }
+    k <- k + files_per_core
   }
 }
 
+
+
+
+# post-process stitched photos --------------------------------------------
 
 # This section is to rename the stitched photo
 # so the filename matches the folder name (core name)
 rm(list=ls())
 
 # EDIT the following parameters
-fd <- "C:/Users/ybcheng/Documents/data2016/20160906/"
+fd <- "//CPDS/Form/Task3c/PhotoStation/20161014"
 file_pattern <- "stitch.jpg$"
 
 setwd(fd)
@@ -82,6 +95,7 @@ if (dir.exists(fd) != TRUE){
       file.rename(from = from_name, to = to_name)
       print(paste0("processed: ", to_name))
     }
+    print(paste0("total of ", i, " cores processed"))
   }
 }
 

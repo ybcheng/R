@@ -1,32 +1,74 @@
 # ******************************************* #
-# This is an R program designed to perform    #
-# partial least squre regression analysis on  #
+# This is an R program designed to preprocess #
+# spectral measurement taken on soil core     #
 # samples using the ASD FieldSpec4 for the    #
 # IID Salton Sea  Project                     #
 #                                             #
 # Formation Environmental                     #
-# Yen-Ben Cheng, July 2016                    #
+# Yen-Ben Cheng, January 2017                 #
 # email: ybcheng@formatinoenv.com 	          #
 # ******************************************* #
-#
-# Depends on files generated from ASD_perProc.R
-#
-# This section is designed to read in resDB_sub.csv
-# then do the average on spectral data for subsets that's sent for lab analysis
-# and generate resDB_pls.csv and derDB_pls.csv
-# 
-# resDB_sub.csv should have an extra column named "subset" than resDB.csv
-# This version also expects lab analysis results following the subset column 
-#
-# EDIT this: set up working directory and where the files are
-# also set up what filename pattern to search for
-# also set up expected number of spectra per core
-# also set up how many soil properties are in the resDB_sub.csv file
 
+rm(list=ls()) # clean start
+
+# EDIT this: set up working directory and where the files are
+fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/CP_NE_NW_SE1_SC1_2_SW/"
+setwd(fd)
+out_fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/CP_NE_NW_SE1_SC1_2_SW/indv_spec/"
+
+
+##################################################
+# Use this section to read in multiple csv files
+# and put them in a big dataframe
+# then output each spectrum into a single file for
+# SMGM processing
+#
+# EDIT this: set up what filename pattern to search for
+fpattern <- "*absDB.csv"
+#
+print("reading in csv files....")
+
+fn <- list.files(fd, pattern = fpattern, include.dirs = TRUE, recursive = TRUE)
+if (length(fn)==0) {
+  stop("NO files found!!!")
+}  
+#print(fn)
+
+if (file.exists(out_fd) == FALSE){
+  dir.create(out_fd, showWarnings = FALSE)
+}
+
+mydata <- data.frame()
+for (f in fn){
+  tmp <- read.table(f, header=TRUE, row.names=1, sep=",", check.names=FALSE)
+  mydata <- rbind.data.frame(mydata, tmp)
+}
+
+#mydata <- data.frame(t(mydata))
+#mydata$wvl <- as.integer(rownames(mydata))
+
+for (i in seq(nrow(mydata))){
+  tmp <- mydata[i,]
+  out_fn <- paste0(out_fd, rownames(tmp)[1], ".csv")
+  tmp <- data.frame(t(tmp))*100
+  tmp$wvl <- as.integer(rownames(tmp))
+  tmp <- tmp[c(2,1)]
+  write.table(tmp, file=out_fn, row.names = FALSE, col.names = FALSE, sep=",")
+  print (paste0("processed:  ", out_fn))
+}
+
+
+
+
+##################################################
+# Use this section to read in SMGM results and 
+# average them based on subset data       
+#
+# EDIT this: set up what filename pattern to search for
 rm(list=ls())
 
-fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/AS_S1_C1_ver2"
-fpattern <- "*_sub.csv"
+fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/CP_NE_NW_SE1_SC1_2_SW"
+fpattern <- "*SMGMdb_sub.csv"
 specPerCore <- 30
 sProp <- 3
 #
@@ -79,35 +121,4 @@ for (f in fn){
   plsDB <- as.data.frame(plsDB)
   plsDB_fname <- gsub("_sub", "_pls", f)
   write.csv(plsDB, plsDB_fname)
-  
-  # After the subDB has been subset and averaged, calculate derivative spectra from it
-  derDBpls <- plsDB[,1:sProp]
-  derNames <- colnames(plsDB[1:sProp])
-  for (k in (2+sProp):(dim(plsDB)[2]-1)){
-    tmpDer <- (plsDB[k+1]-plsDB[k-1])/(as.integer(colnames(plsDB[k+1]))-as.integer(colnames(plsDB[k-1])))
-    tmpName <- colnames(plsDB[k])
-  #  if (k==2){
-  #    derDBpls <- tmpDer
-  #    derNames <- tmpName
-  #  } else{
-      derDBpls <- cbind(derDBpls, tmpDer)
-      derNames <- append(derNames, tmpName)
-  #  }
-  }
-  colnames(derDBpls) <- derNames
-  derDBpls_fname <- gsub("res", "der", plsDB_fname)
-  write.csv(derDBpls, derDBpls_fname)
-  
-  # also calculate continuum removal from plsDB
-  library(prospectr)
-  
-  crDBpls <- continuumRemoval(plsDB[,(sProp+1):ncol(plsDB)])
-  crDBpls <- as.data.frame(crDBpls)
-  colnames(crDBpls) <- colnames(plsDB[(sProp+1):ncol(plsDB)])
-  crDBpls <- cbind(plsDB[1:sProp], crDBpls)
-  crDBpls_fname <- gsub("res", "cr", plsDB_fname)
-  write.csv(crDBpls, crDBpls_fname)
-  
-  print(paste0("processed: ", f))
 }
-
