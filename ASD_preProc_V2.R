@@ -23,11 +23,15 @@ rm(list=ls()) # clean start
 # set up parameters and etc -----------------------------------------------
 
 # EDIT this: set up working directory and where the files are
-#fd <- "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/ASD/Processing/4PLS/VD"
-fd <- "K:/IID_SaltonSea/Tasks/Task3f_SaltonWashFieldStudy/ASD/Processing/4PLS/SW_1_9"
+#fd <- "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/ASD/Original/20171028"
+#fd <- "K:/IID_SaltonSea/Tasks/Task3f_SaltonWashFieldStudy/ASD/Original/20171099"
 #fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS/AN_ST"
-#fd <- "C:/Users/ybcheng/Documents/data2017/20170116_ASD_pco"
+#fd <- "K:/IID_SaltonSea/Tasks/PotentialPilotStudies/PoeRoad/ASD/Original/20180223"
+#fd <- "K:/IID_SaltonSea/Tasks/PotentialPilotStudies/Clubhouse/ASD/Original/20180225"
+fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Original/20190311"
 
+# EDIT this part to specify whether to spectrally resample the raw data 
+resampleYN <- TRUE  #default to resample raw data to 10nm
 
 # search and read in files ------------------------------------------------
 
@@ -188,7 +192,6 @@ print("creating labels for spectra finsihed")
 print("")
 
 
-
 # spctral resampling on absolute reflectance ------------------------------
 
 # This section is to perform spectral average on absolute reflectance database
@@ -196,27 +199,39 @@ print("")
 # FWHM is assumed to be the same as sampling interval
 #
 library(prospectr)
-#
-# EDIT this part to specify the new resampled wavelength
-resWav <- seq(370, 2480, by=10)
-#
-print("spectral resampling begins....")
+resampleYN <- TRUE
 
-wav <- as.numeric(colnames(absDB))
-resDB <- resample2(absDB, wav, resWav)
-resDB <- as.data.frame(resDB)
-write.csv(resDB,"resDB.csv")
-
-resDB_sub <- cbind(subset=NA, sand=NA, silt=NA, clay=NA, resDB)
-write.csv(resDB_sub,"resDB_sub.csv")
-
-print("spectral resampling finished")
-print("")
-
+if (resampleYN==TRUE){
+  # EDIT this part to specify the new resampled wavelength
+  resWav <- seq(370, 2480, by=10)
+  #
+  print("spectral resampling begins....")
+  
+  wav <- as.numeric(colnames(absDB))
+  resDB <- resample2(absDB, wav, resWav)
+  resDB <- as.data.frame(resDB)
+  write.csv(resDB,"resDB.csv")
+  
+  
+  
+  resDB_sub <- cbind(subset=NA, sand=NA, silt=NA, clay=NA, resDB)
+  write.csv(resDB_sub,"resDB_sub.csv")
+  
+  print("spectral resampling finished")
+  print("")
+} else {
+  print("no spectral resampling....")
+  resDB <- as.data.frame(absDB)
+  write.csv(resDB,"resDB.csv")
+  resDB_sub <- cbind(subset=NA, sand=NA, silt=NA, clay=NA, resDB)
+  write.csv(resDB_sub,"resDB_sub.csv")
+  print("spectral resampling finished")
+  print("")
+}
+if(any(resDB>1)){print("Check resDB!! reflectance > 1")}
 
 
 # calculate first derivative spectra --------------------------------------
-
 # from the resampled 10nm resolution database
 #
 print("calculating 1st derivative spectra begin....")
@@ -255,3 +270,7 @@ write.csv(crDB, "crDB.csv")
 print("calculating continuum removal finished")
 print("")
 print("ALL DONE!!!")
+
+
+
+       

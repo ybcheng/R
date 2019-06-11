@@ -25,14 +25,20 @@
 
 rm(list=ls())
 
-fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/AS_S1_C1_ver2"
+#fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS_SMGM/AS_S1_C1_ver2"
+#fd <- "K:/IID_SaltonSea/Tasks/Task3f_SaltonWashFieldStudy/ASD/Processing/4PLS/SW_ALL - Copy"
+#fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/PR_TS_V4/PoeRoad_V4"
+#fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/VailDrain_V2"
+#fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/BB_y_PA"
+fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/Pacific_B1"
+
 fpattern <- "*_sub.csv"
 specPerCore <- 30
 sProp <- 3
 #
 #
 setwd(fd)
-fn <- list.files(fd, pattern = fpattern, include.dirs = TRUE, recursive = TRUE, full.names=TRUE)
+fn <- list.files(fd, pattern = fpattern, include.dirs = FALSE, recursive = FALSE, full.names=TRUE)
 if (length(fn)==0) {
   stop("NO files found!!!")
 } 

@@ -14,16 +14,34 @@
 rm(list=ls())
 
 #Photo_Folder = "K:/IID_SaltonSea/Tasks/Task3c/Tasks/PhotoDocumentation/Final"
-Photo_Folder = "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/PhotoDocumentation/Final"
+#Photo_Folder = "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/PhotoDocumentation/Final"
+#Photo_Folder = "K:/IID_SaltonSea/Tasks/PilotStudies/VailDrain/PhotoDocumentation/Final"
+Photo_Folder = "K:/IID_SaltonSea/Tasks/Soil mapping/PhotoDocumentation/Final"
+if (file.exists(Photo_Folder) != TRUE){
+  stop("Photo folder does not exist")
+}
 
 #csv_file = "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Final/CSV/CH_ALL.csv"
 #csv_file = "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS/AS_S1_C1_ver2/AS_C3_003_results.csv"
-csv_file = "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/ASD/Processing/4PLS/VD/results(2).csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/PilotStudies/VailDrain/ASD/Processing/4PLS/ver_2019May/2019ver_VD_wavg60.csv"
 #csv_file = "C:/Users/ybcheng/Documents/R/SaltonSea/examples_plotting/IID_Task3c_Plot_Photo_ASD_fine_avg60_YBC.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/PotentialPilotStudies/PoeRoad/ASD/Processing/4PLS/PR_001_027_wavg60_V2.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/PoeRoad_V2/PR_N2_PE_wavg60_V2.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/TrifoliumStorm_V3/TS_B1_wavg60_V3.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/AlamoRiverSouth/AS_FV_wavg60.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/SanFelipeWash_N2_N1/SFW_N2_N1_wavg60.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/WisterFrink_B1/WF_B1_wavg60.csv"
+#csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/VailDrain_V2/20190520_VD_wavg60.csv"
+csv_file = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/Pacific_B1/PA_B1_wavg60.csv"
+if (file.exists(csv_file) != TRUE){
+  stop("csv file does not exist")
+}
 
 #SavePDF = "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/Charts2/NewRiver/Photo_And_ASD_"
 #SavePDF = "C:/Users/ybcheng/Documents/R/SaltonSea/examples_plotting/IID_Task3c_Plot_Photo_ASD_fine_avg60_YBC.pdf"
-SavePDF = "K:/IID_SaltonSea/Tasks/Task3e_VailDrainFSPS/ASD/Processing/Charts/VD/VD_core1.pdf"
+#SavePDF = "K:/IID_SaltonSea/Tasks/PotentialPilotStudies/PoeRoad/ASD/Processing/Charts/PR_ALL_V2.pdf"
+SavePDF = "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/Charts/PA_B1_wavg60.pdf"
+
 
 ##################################################
 
@@ -41,7 +59,7 @@ library(extrafont)
 library(plotrix)
 
 # Importing Data
-iData <- read.csv(csv_file,header=T)
+iData <- read.csv(csv_file,header=TRUE, fileEncoding="UTF-8-BOM")
 temp <- data.frame(do.call('rbind', strsplit(as.character(iData$FEID),'_',fixed=TRUE)))
 Zmax <- max(iData$Z)
 
@@ -169,6 +187,9 @@ for (jpgfile in FEIDjpg_Unique) {
   mtext("Depth (cm)", side=2, line=1, cex=0.6)
   mtext("Particle Percentage (%)", side=1, line=1, cex=0.6)
   Location <- paste0(paste0(paste0("X: ", iData2_subset$X[1]), "   Y: "), iData2_subset$Y[1])
+  mtext(Location, side=3, line=-0.7, cex=0.5, outer=T)
+  #mtext(iData2_subset$FEID[1], side=3, line=3, cex=1.3, outer=T)
+  mtext(substr(iData2_subset$FEID[1], 1, nchar(as.character(iData2_subset$FEID[1]))-4) , side=3, line=0.0, cex=0.5, outer=T)
 
 }  
 

@@ -15,8 +15,9 @@
 rm(list=ls())
 
 # EDIT following parameters
-fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS/CH_S2/"
-fpattern <- "*raw.csv"
+#fd <- "K:/IID_SaltonSea/Tasks/Task3c/Tasks/ASD/Processing/4PLS/CH_S2/"
+fd <- "K:/IID_SaltonSea/Tasks/Soil mapping/ASD/Processing/4PLS/SanFelipeWash_N2_N1/"
+fpattern <- "*raw_2.csv"
 specs_per_core = 30
 replace <- FALSE
 
@@ -33,10 +34,16 @@ for (f in fn){
   
   #copy raw data and bring outliers back to range
   mydata$re_sand <- mydata$sand
-  mydata$re_sand[mydata$sand >= 100] <- 99
+  num_s1 <- length(mydata$re_sand[mydata$sand >= 100])
+  num_s2 <- length(mydata$re_sand[mydata$sand <= 0])
+  mydata$re_sand[mydata$sand >= 100] <- round(runif(num_s1,92,97))
+  mydata$re_sand[mydata$sand <= 0] <- round(runif(num_s2,0,7))
   mydata$re_silt <- 0
-  mydata$re_clay <- mydata[,5]
-  mydata$re_clay[mydata$re_clay <= 0] <- 0
+  mydata$re_clay <- mydata[,ncol(mydata)-2]
+  num_c1 <- length(mydata$re_clay[mydata$re_clay >= 100])
+  num_c2 <- length(mydata$re_clay[mydata$re_clay <= 0])
+  mydata$re_clay[mydata$re_clay <= 0] <- round(runif(num_c2,0,4))
+  mydata$re_clay[mydata$re_clay >= 100] <- round(runif(num_c1,87,94))
 
   mydata$re_silt <- 100 - mydata$re_sand - mydata$re_clay
 
@@ -46,7 +53,7 @@ for (f in fn){
   mydata$re_silt <- 100 - mydata$re_sand - mydata$re_clay
   
   #output refined estimates
-  re_filename <- sub("raw", "raw_refined", f)
+  re_filename <- sub("raw", "refined", f)
   write.csv(mydata, re_filename) #row.names = FALSE to rid of rownames
   print(paste0("generated: ", re_filename))
 }
